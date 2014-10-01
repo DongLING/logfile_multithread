@@ -12,7 +12,7 @@
 #include <sys/stat.h>
 
 #define BUFFER_SIZE PIPE_BUF
-#define FIFO_NAME "./logfile_dong.log"
+#define FIFO_NAME "./logfile_fifo.log"
 
 int main()
 {

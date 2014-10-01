@@ -11,7 +11,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-#define FIFO_NAME "./logfile_dong.log"
+#define FIFO_NAME "./logfile_fifo.log"
 
 int main()
 {

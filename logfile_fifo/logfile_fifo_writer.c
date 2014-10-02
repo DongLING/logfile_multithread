@@ -17,6 +17,7 @@ int main()
 {
     int pipe_fd;
     
+	// access() is a function under Linux.
     //if the pipe file do not exist
     if (access(FIFO_NAME, F_OK) == -1)
     {
@@ -24,8 +25,8 @@ int main()
         mkfifo(FIFO_NAME, 0777);
     }
     
-    //open FIFO pipe file.
-    //this will be brocked until some one open another end point(read-point) of this pipe
+    //open FIFO pipe file you just created by mkfifo().
+    //this will be blocked until "some one" opens another end point(read-point) of this pipe
     pipe_fd = open(FIFO_NAME, O_WRONLY);
     
     //write data into pipe 

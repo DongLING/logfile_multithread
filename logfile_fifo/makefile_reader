@@ -1,0 +1,11 @@
+CC = gcc
+OBJS = logfile_fifo_reader.o
+
+logfile_reader:$(OBJS)
+	$(CC) $(OBJS) -o logfile_reader
+
+$(OBJS):
+	$(CC) -c logfile_fifo_reader.c
+
+clean:
+	rm -rf *.o

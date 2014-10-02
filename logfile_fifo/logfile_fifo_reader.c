@@ -23,7 +23,7 @@ int main()
     memset(buffer, '\0', sizeof(buffer));
     
     //open FIFO pipe file.
-    //this will be brocked until some one open another end point(write-point) of this pipe
+    //this will be blocked until "some one" open another end point(write-point) of this pipe
     pipe_fd = open(FIFO_NAME, O_RDONLY);
     
     if(read(pipe_fd, buffer, BUFFER_SIZE) > 0)

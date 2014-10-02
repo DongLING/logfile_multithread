@@ -1,0 +1,11 @@
+CC = gcc
+OBJS = ipc_multithread_writer.o
+
+ipc_writer:$(OBJS)
+	$(CC) $(OBJS) -o ipc_writer
+
+$(OBJS):
+	$(CC) -c ipc_multithread_writer.c
+
+clean:
+	rm -rf *.o

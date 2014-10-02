@@ -11,13 +11,13 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-#define FIFO_NAME "./logfile_fifo.log"
+#define FIFO_NAME "./ipc_fifo.log"
 
 int main()
 {
     int pipe_fd;
     
-	// access() is a function under Linux.
+	//access() is a function under Linux.
     //if the pipe file do not exist
     if (access(FIFO_NAME, F_OK) == -1)
     {

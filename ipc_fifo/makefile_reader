@@ -1,0 +1,11 @@
+CC = gcc
+OBJS = ipc_fifo_reader.o
+
+ipc_reader:$(OBJS)
+	$(CC) $(OBJS) -o ipc_reader
+
+$(OBJS):
+	$(CC) -c ipc_fifo_reader.c
+
+clean:
+	rm -rf *.o

@@ -5,17 +5,21 @@
 pthread_mutex_t count_mutex = PTHREAD_MUTEX_INITIALIZER;
 pthread_cond_t condition_var = PTHREAD_COND_INITIALIZER;
 
+/* Declare 2 functions used by 2 threads */
 void *functionCount1();
 void *functionCount2();
 int count = 0;
+
 #define COUNT_DONE 10
 #define COUNT_HALT1 3
 #define COUNT_HALT2 6
 
 int main()
 {
+	/* Define 2 threads */
     pthread_t thread1, thread2;
 
+	/* Create 2 threads with the function */
     pthread_create(&thread1, NULL, &functionCount1, NULL);
     pthread_create(&thread2, NULL, &functionCount2, NULL);
 
@@ -28,7 +32,6 @@ int main()
 }
 
 // Write numbers 1-3 and 8-10 as permitted by functionCount2()
-
 void *functionCount1()
 {
     for (;;) {
@@ -49,7 +52,6 @@ void *functionCount1()
 }
 
 // Write numbers 4-7
-
 void *functionCount2()
 {
     for (;;) {

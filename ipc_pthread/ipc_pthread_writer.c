@@ -11,13 +11,12 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-#define FIFO_NAME "./ipc_fifo.log"
+#define FIFO_NAME "/tmp/my_fifo"
 
 int main()
 {
     int pipe_fd;
     
-	//access() is a function under Linux.
     //if the pipe file do not exist
     if (access(FIFO_NAME, F_OK) == -1)
     {
@@ -25,12 +24,12 @@ int main()
         mkfifo(FIFO_NAME, 0777);
     }
     
-    //open FIFO pipe file just created by mkfifo() above.
-    //this will be blocked until "some one" opens another end point(read-point) of this pipe
+    //open FIFO pipe file.
+    //this will be brocked until some one open another end point(read-point) of this pipe
     pipe_fd = open(FIFO_NAME, O_WRONLY);
     
     //write data into pipe 
-    write(pipe_fd, "Hi, this is a FIFO test dongLING 20140929!", PIPE_BUF);
+    write(pipe_fd, "hi, this is a test", PIPE_BUF);
     
     //close FIFO pipe file descriptor
     close(pipe_fd);

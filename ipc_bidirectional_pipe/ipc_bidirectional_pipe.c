@@ -1,78 +1,76 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include <unistd.h>
-#include <sys/types.h>
+#include <signal.h>
+#include <string.h>
 
-#define K 1024
-#define WRITELEN (128*K)
-
-int main(void)
+void read_move(int fd)
 {
-	int result = -1;
-	int fd[2], nbytes;
-	pid_t pid;
-	char string[WRITELEN] = "Hello pipe world dongLING 20140926!";
-	char readbuffer[10*K];
-//	memset(readbuffer, '\0', sizeof(readbuffer));
-	printf("%d\n",sizeof(readbuffer));
+    FILE *stream = fdopen(fd, "r");
+    char c;
+    setvbuf(stream, NULL, _IONBF, BUFSIZ);  
+    while ((c = fgetc(stream)) != EOF)
+    {
+        putchar(c);
+    }
+    fclose(stream);
+}
 
-	int *write_fd = &fd[1];
-	int *read_fd = &fd[0];
+void write_move(int fd, const char *move)
+{
+    FILE *stream = fdopen(fd, "w");
+    setvbuf(stream, NULL, _IONBF, BUFSIZ);
+    fprintf(stream, "%s", move);
+    fclose(stream);
+}
 
-	result = pipe(fd);
-	if(-1 == result)
-	{
-		printf("fail to create pipe\n");
-		return -1;
-	}	
+int main() {
+    pid_t pid;
+    int wpipe[2];
+    int rpipe[2];
+    if (pipe(wpipe) || pipe(rpipe))
+    {
+        fprintf(stderr, "Pipe creation failed.\n");
+        return EXIT_FAILURE;
+    }
+    pid = fork();
+    if (pid == 0)
+    {
+        /* gnuchess process */
+        setvbuf(stdin, NULL, _IONBF, BUFSIZ);
+        setvbuf(stdout, NULL, _IONBF, BUFSIZ);
+        setvbuf(stderr, NULL, _IONBF, BUFSIZ);
+        dup2(wpipe[0], STDIN_FILENO);
+        dup2(rpipe[1], STDOUT_FILENO);
+        dup2(rpipe[1], STDERR_FILENO);
+        close(wpipe[0]);
+        close(wpipe[1]);
+        close(rpipe[0]);
+        close(rpipe[1]);
+        if (execl("/usr/games/gnuchess", "gnuchess", "-x", NULL) == -1)
+        {
+            fprintf(stderr, "Exec failed.\n");
+            return EXIT_FAILURE;
+        }
+        return EXIT_SUCCESS;
+    }
 
-	pid = fork();
-	printf("The pid's value is: %d\n", pid);
+    /* parent process */
 
-	if(-1 == pid)
-	{
-		printf("fail to fork\n");
-		return -1;
-	}
+    printf("Sending move to GNU Chess... \n");
+    close(wpipe[0]); /* Close other end */
+    write_move(wpipe[1], "c3\n");   
 
-	if(0 == pid)
-	{
-		int write_size = WRITELEN;
-		result = 0;
-		close(*read_fd);
-		while(write_size >= 0)
-		{
-			result = write(*write_fd, string, write_size);
-				printf("%d\n", result);
-			if(result > 0)
-				{
-					write_size -= result;
-					printf("write %d bytes data, the rest is %d bytes", result, write_size);
-				}
-				else
-				{
-					sleep(10);
-				}
-			}
-		return 0;
-	}
-	else
-	{
-		close(*write_fd);
-		while(1);
-		{
-			nbytes = read(*read_fd, readbuffer, sizeof(readbuffer));
-//			printf("Receive %d bytes data: %s \n", nbytes, readbuffer);
-			if(nbytes <= 0)
-			{
-				printf("no data to write\n");
-//				return 1;
-				exit(1);
-//				break;   // original statement
-			}
-			printf("Receive %d bytes data: %s \n", nbytes, readbuffer);
-		}
-	}
-	return 0;
+    printf("Reading response... \n");
+    close(rpipe[1]); /* Close other end */
+    read_move(rpipe[0]);
+
+    /* clean up */  
+    close(wpipe[1]);
+    close(rpipe[0]);    
+
+    /* kill gnuchess */
+    kill(pid, SIGTERM);
+
+    return EXIT_SUCCESS;
 }

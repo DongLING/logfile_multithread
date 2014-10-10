@@ -17,13 +17,14 @@ int main(void)
 //	memset(readbuffer, '\0', sizeof(readbuffer));
 	printf("%d\n",sizeof(readbuffer));
 
-	int *write_pipe_fd = &fd[1];
-	int *read_pipe_fd = &fd[0];
+// Easy to understand 2 operations of pipe.
+	int *write_pipe = &pipe_fd[1];
+	int *read_pipe = &pipe_fd[0];
 
 	result = pipe(pipe_fd);
 	if(-1 == result)
 	{
-		printf("fail to create pipe\n");
+		printf("Fail to create pipe\n");
 		return -1;
 	}	
 
@@ -32,23 +33,26 @@ int main(void)
 
 	if(-1 == pid)
 	{
-		printf("fail to fork\n");
+		printf("Fail to fork\n");
 		return -1;
 	}
 
+//	if(0 < pid)   // child process
 	if(0 == pid)   // child process
 	{
 		int write_size = WRITELEN;
 		result = 0;
-		close(*read_pipe_fd);
+
+		close(*read_pipe);
 		while(write_size >= 0)
 		{
-			result = write(*write_pipe_fd, string, write_size);
+			result = write(*write_pipe, string, write_size);
+			// return string number written = result
 				printf("%d\n", result);
 			if(result > 0)
 				{
 					write_size -= result;
-					printf("write %d bytes data, the rest is %d bytes", result, write_size);
+					printf("Write %d bytes data, the rest is %d bytes", result, write_size);
 				}
 				else
 				{
@@ -59,14 +63,14 @@ int main(void)
 	}
 	else   // parent process
 	{
-		close(*write_pipe_fd);
+		close(*write_pipe);
 		while(1);
 		{
-			nbytes = read(*read_pipe_fd, readbuffer, sizeof(readbuffer));
+			nbytes = read(*read_pipe, readbuffer, sizeof(readbuffer));
 //			printf("Receive %d bytes data: %s \n", nbytes, readbuffer);
 			if(nbytes <= 0)
 			{
-				printf("no data to write\n");
+				printf("No data to write\n");
 //				return 1;
 				exit(1);
 //				break;   // original statement

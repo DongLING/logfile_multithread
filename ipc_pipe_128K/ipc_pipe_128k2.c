@@ -11,8 +11,8 @@ int main(int argc, char **argv)
 {
     int pipe_fd[2];
     pid_t pid;
-    char r_buf[read_max_size];
-    char w_buf[write_max_size];
+    char r_buf[write_max_size];
+    char w_buf[read_max_size] = "Hello dongLING 20141007";
     int writenum;
     int readnum;
     int readsum;
@@ -30,27 +30,28 @@ int main(int argc, char **argv)
     {
 		close(pipe_fd[1]);
 		readsum = 0;
+
 		readnum = read(pipe_fd[0], r_buf, read_max_size);
 		while (readnum > 0)
 		{
 		    readsum += readnum;
 		    printf("Child: read %d bytes from pipe, sum=%d.\n", readnum, readsum);
 		    readnum = read(pipe_fd[0], r_buf, read_max_size);
-	}
+		}
 	
-	printf("Child: no more bytes to read from pipe!\n");
-	close(pipe_fd[0]);
-	sleep(1);
-	exit(0);
+		printf("Child: no more bytes to read from pipe!\n");
+		close(pipe_fd[0]);
+		sleep(1);
+		exit(0);
     }
 	else if (pid > 0)		// parent {close(pipe_fd[0]); 
-		{writenum = write(pipe_fd[1], w_buf, write_max_size);	// 写操作会阻塞，直到所有数据写完 
-	    printf("Parent: write %d bytes to pipe.\n", writenum);
-	    close(pipe_fd[1]);
-	    sleep(1);
-	    exit(0);
-		}
-
+			{
+				writenum = write(pipe_fd[1], w_buf, write_max_size);	// 写操作会阻塞，直到所有数据写完 
+			    printf("Parent: write %d bytes to pipe.\n", writenum);
+			    close(pipe_fd[1]);
+			    sleep(1);
+			    exit(0);
+			}
 	else
 	{
 		perror("fork");

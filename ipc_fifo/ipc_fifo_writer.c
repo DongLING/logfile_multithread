@@ -11,7 +11,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-#define FIFO_NAME "./ipc_fifo.log"
+#define FIFO_NAME "./ipc_fifo"
 
 int main()
 {

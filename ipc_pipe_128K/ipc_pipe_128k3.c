@@ -14,15 +14,15 @@ int main()
     }
  
     pid_t pid = fork();
-    if (pid == 0) {
+    if (pid > 0) {
         close(pfd[1]);
         char rdbuf[1024];
         read(pfd[0], rdbuf, sizeof(rdbuf));
 		printf("%s\n", rdbuf);
         return 0;
-    } else if (pid > 0) {
+    } else if (pid == 0) {
         close(pfd[0]);
-        char wrbuf[] = "abcd";
+        char wrbuf[] = "Hello!\n";
         write(pfd[1], wrbuf, sizeof(wrbuf));
         pid_t cpid = waitpid(-1, NULL, 0);
     } else {

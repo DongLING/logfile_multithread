@@ -12,7 +12,7 @@
 #include <sys/stat.h>
 
 #define BUFFER_SIZE PIPE_BUF
-#define FIFO_NAME "./ipc_fifo.log"
+#define FIFO_NAME "./ipc_fifo"
 
 int main()
 {

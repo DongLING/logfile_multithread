@@ -1,4 +1,5 @@
 CC = gcc
+CFLAGS = -Wall
 OBJS = ipc_fifo_reader.o
 
 ipc_reader:$(OBJS)

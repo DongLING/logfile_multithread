@@ -1,0 +1,12 @@
+CC = gcc
+CFLAGS = -Wall
+OBJS = ipc_pipe_64k.o
+
+ipc_pipe_64k:$(OBJS)
+	$(CC) $(CFLAGS) $(OBJS) -o ipc_pipe_64k -lpthread
+
+$(OBJS):
+	$(CC) $(CFLAGS) -c ipc_pipe_64k.c
+
+clean:
+	rm -rf *.o
